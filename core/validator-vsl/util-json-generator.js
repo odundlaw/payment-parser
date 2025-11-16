@@ -1,4 +1,5 @@
 const { toKebabCase, writeFileWithDirs } = require('./util-helpers');
+
 function getRandomDataType(type, possibleValues, constraints) {
   let retVal = '""';
   const exampleValue = constraints?.example?.value;
@@ -17,8 +18,8 @@ function getRandomDataType(type, possibleValues, constraints) {
   return retVal;
 }
 function getReferencedTypeFromAST(type, AST) {
-  let t = type.replace(/[$#]/g, '');
-  let [parent, key] = t.split('.');
+  const t = type.replace(/[$#]/g, '');
+  const [parent, key] = t.split('.');
   let referencedType;
   if (parent && key) {
     const astReferenceObject = AST[parent]?.children?.[key];
@@ -35,28 +36,19 @@ function getReferencedTypeFromAST(type, AST) {
   return referencedType;
 }
 function generateTypeScriptType(AST, tabIndexCount = 0, trueAST) {
-  let typeScriptStringTokens = [];
+  const typeScriptStringTokens = [];
   const keys = Object.keys(AST);
   keys.forEach((k) => {
     let typeBlockOpened = false;
-    let node = AST[k];
+    const node = AST[k];
     if (node?.dataType?.includes('#')) {
-      const astReferenceObject = getReferencedTypeFromAST(
-        node.dataType,
-        trueAST,
-      );
+      const astReferenceObject = getReferencedTypeFromAST(node.dataType, trueAST);
       if (typeof astReferenceObject === 'object') {
         node.children = astReferenceObject.children;
         AST[k] = node;
       }
-    } else if (
-      node?.dataType === 'array' &&
-      node?.arrayChildrenType?.includes('#')
-    ) {
-      const astReferenceObject = getReferencedTypeFromAST(
-        node.arrayChildrenType,
-        trueAST,
-      );
+    } else if (node?.dataType === 'array' && node?.arrayChildrenType?.includes('#')) {
+      const astReferenceObject = getReferencedTypeFromAST(node.arrayChildrenType, trueAST);
       // console.log(astReferenceObject);
       if (typeof astReferenceObject === 'object') {
         node.children = astReferenceObject.children;
@@ -90,19 +82,15 @@ function generateTypeScriptType(AST, tabIndexCount = 0, trueAST) {
       // }
       if (!isRoot) {
         typeScriptStringTokens.push(
-          `${indentationPrefix}${declarationSuffix}"${k}"${optionalSuffix}${equalitySuffix}${arrayOpeningPrefix}{`,
+          `${indentationPrefix}${declarationSuffix}"${k}"${optionalSuffix}${equalitySuffix}${arrayOpeningPrefix}{`
         );
       } else {
-        typeScriptStringTokens.push(
-          `${indentationPrefix}${arrayOpeningPrefix}{`,
-        );
+        typeScriptStringTokens.push(`${indentationPrefix}${arrayOpeningPrefix}{`);
       }
       typeBlockOpened = true;
       if (http_method && http_path) {
         const inlineTabs = new Array(tabIndexCount + 1).fill('  ').join('');
-        typeScriptStringTokens.push(
-          `${inlineTabs}HTTP_METHOD:'${http_method}',`,
-        );
+        typeScriptStringTokens.push(`${inlineTabs}HTTP_METHOD:'${http_method}',`);
         typeScriptStringTokens.push(`${inlineTabs}HTTP_PATH:'${http_path}',`);
       }
     } else {
@@ -124,14 +112,13 @@ function generateTypeScriptType(AST, tabIndexCount = 0, trueAST) {
       // }
       typeScriptStringTokens.push(
         `${tabs}"${k}"${optionalSuffix}: ${arrayOpeningPrefix}${
-          getRandomDataType(dataTypeToRender, possibleValues, constraints) ||
-          'any'
-        }${arrayClosingSuffix},`,
+          getRandomDataType(dataTypeToRender, possibleValues, constraints) || 'any'
+        }${arrayClosingSuffix},`
       );
     }
     if (nodeHasChildren) {
       typeScriptStringTokens.push(
-        generateTypeScriptType(node.children, tabIndexCount + 1, trueAST),
+        generateTypeScriptType(node.children, tabIndexCount + 1, trueAST)
       );
     }
     if (typeBlockOpened) {
@@ -140,17 +127,15 @@ function generateTypeScriptType(AST, tabIndexCount = 0, trueAST) {
       const terminationSuffix = isRoot ? '' : ',';
       const spacing = isRoot ? '  ' : '';
       typeScriptStringTokens.push(
-        `${indentationPrefix}${spacing}}${arrayClosingSuffix}${terminationSuffix}`,
+        `${indentationPrefix}${spacing}}${arrayClosingSuffix}${terminationSuffix}`
       );
       if (isRoot) {
         // typeScriptStringTokens.push(`\nexport { ${k} };\n\n`);
         // writeFileWithDirs('./utype.ts', typeScriptStringTokens.join('\n'));
         // generatedTypes.push(typeScriptStringTokens.join('\n'));
         // typeScriptStringTokens = [];
-        const lastLine =
-          typeScriptStringTokens[typeScriptStringTokens.length - 1];
-        typeScriptStringTokens[typeScriptStringTokens.length - 1] =
-          lastLine.replace(/\s+/g, '');
+        const lastLine = typeScriptStringTokens[typeScriptStringTokens.length - 1];
+        typeScriptStringTokens[typeScriptStringTokens.length - 1] = lastLine.replace(/\s+/g, '');
       }
     }
   });

@@ -45,26 +45,16 @@ function generateServiceFile(AST) {
         const modelCreationStatements = [];
         Object.keys(requiredModels).forEach((rm) => {
           const rmObject = requiredModels[rm];
-          requireStatements.push(
-            `const ${rm} = require('../repositories/${rmObject.dataType}');`,
-          );
+          requireStatements.push(`const ${rm} = require('../repositories/${rmObject.dataType}');`);
           if (rmObject.constraints?.create) {
             modelCreationStatements.push(
-              `const created${rm} = await ${rm}.create({...validatedData, created: Date.now(), updated: Date.now()});`,
+              `const created${rm} = await ${rm}.create({...validatedData, created: Date.now(), updated: Date.now()});`
             );
           }
         });
         // console.log(accepts, { [astKey]: { ...accepts, isRoot: true } });
-        const jsdocString = jsdocGenerator(
-          { [astKey]: { ...accepts, isRoot: true } },
-          '',
-          AST,
-        );
-        const speclString = speclGenerator(
-          { [astKey]: { ...accepts, isRoot: true } },
-          0,
-          AST,
-        );
+        const jsdocString = jsdocGenerator({ [astKey]: { ...accepts, isRoot: true } }, '', AST);
+        const speclString = speclGenerator({ [astKey]: { ...accepts, isRoot: true } }, 0, AST);
         const serviceString = serviceTemplateGen({
           jsdocString,
           speclString: speclString.replace(`export { ${astKey}Spec }`, ''),

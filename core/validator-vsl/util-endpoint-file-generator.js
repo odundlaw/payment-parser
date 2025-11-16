@@ -52,31 +52,26 @@ function generateServiceFile(AST) {
       // console.log(astNode)
       let middlewareRequireStatement = '';
       const astMiddlewares = astNode.children?.middlewares?.children || {};
-      const astPayloadAuguments =
-        astNode.children?.payloadAuguments?.children || {};
-      const rcUserAuguments = Object.keys(
-        astNode.children?.userAuguments?.children || {},
-      );
+      const astPayloadAuguments = astNode.children?.payloadAuguments?.children || {};
+      const rcUserAuguments = Object.keys(astNode.children?.userAuguments?.children || {});
       const payloadAuguments = Object.keys(astPayloadAuguments);
       const middlewares = Object.keys(astMiddlewares);
       if (middlewares.length) {
         middlewareRequireStatement = `const { ${middlewares.join(
-          ',',
+          ','
         )} } = require('@app-core/middlewares');`;
       }
-      //const userId = rc.meta.user.id;
+      // const userId = rc.meta.user.id;
       let payloadString = '{}';
       let destructureString = '';
       if (payloadAuguments.length) {
         payloadString = `{...${payloadAuguments.join(',...')}}`;
         destructureString = `const {${payloadAuguments.join(',')}} = rc;`;
       }
-      let payloadUserAugment = [];
+      const payloadUserAugment = [];
       rcUserAuguments.forEach((rc) => {
         const rcNode = astNode.children?.userAuguments?.children[rc];
-        payloadUserAugment.push(
-          `payload.${rcNode.dataType} = rc.meta.user.${rc};`,
-        );
+        payloadUserAugment.push(`payload.${rcNode.dataType} = rc.meta.user.${rc};`);
       });
       const payloadUserAugmentString = payloadUserAugment.length
         ? payloadUserAugment.join('\n')
@@ -101,7 +96,7 @@ function generateServiceFile(AST) {
       endpointStringTokens.push(endpointString.replace(/\n{2,}/g, '\n\n'));
       writeFileWithDirs(
         `./endpoints/${baseResourceFolder}/${toKebabCase(astKey)}.js`,
-        endpointString.replace(/\n{2,}/g, '\n\n'),
+        endpointString.replace(/\n{2,}/g, '\n\n')
       );
     }
   });
