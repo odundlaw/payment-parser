@@ -4,6 +4,7 @@
 //   isCommentText: true,
 // }
 const lineProcessor = require('./regexes');
+
 function lex(sourceString = '') {
   const lines = sourceString.split('\n');
   const parentMap = [];
@@ -11,7 +12,7 @@ function lex(sourceString = '') {
   const nodes = [];
 
   lines.forEach((line, index) => {
-    let currentParent = parentMap.slice(-1)[0];
+    const currentParent = parentMap.slice(-1)[0];
     const parentNode = nodes[currentParent];
     const nodeInfo = {
       line,
@@ -35,10 +36,8 @@ function lex(sourceString = '') {
     nodes.push(nodeInfo);
     if (!nodeInfo.attributes?.isNotChild) {
       parentNode?.children?.push(nodeInfo.index);
-    } else {
-      if (nodeInfo.attributes?.isSpreadOperator) {
-        parentNode?.spreads?.push(nodeInfo.attributes.name);
-      }
+    } else if (nodeInfo.attributes?.isSpreadOperator) {
+      parentNode?.spreads?.push(nodeInfo.attributes.name);
     }
   });
   // console.log({ nodes, rootNodes });

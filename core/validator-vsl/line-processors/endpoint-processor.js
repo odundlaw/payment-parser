@@ -1,4 +1,5 @@
 const { h, buildRegexFromComplexString } = require('../utils/regex-builder');
+
 endpointRegexString = h`
 ^
   \s*
@@ -19,13 +20,8 @@ function endpointRouteLineProcessor(line = '') {
   let nodeInfo = {};
   const lineMatches = line.match(endpointRegex);
   const lineGroups = lineMatches?.groups;
-  const {
-    HTTP_METHOD,
-    HTTP_PATH,
-    OPENING_PAREN,
-    HTTP_ENDPOINT_NAME,
-    COMMENT_TEXT,
-  } = lineGroups || {};
+  const { HTTP_METHOD, HTTP_PATH, OPENING_PAREN, HTTP_ENDPOINT_NAME, COMMENT_TEXT } =
+    lineGroups || {};
   nodeInfo = {
     lineMatched: !!HTTP_METHOD,
     http_method: HTTP_METHOD,

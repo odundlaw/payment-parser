@@ -1,4 +1,5 @@
 const { h, buildRegexFromComplexString } = require('../utils/regex-builder');
+
 schemaRegexString = h`
 ^
   (#)?(?<SCHEMA_NAME>[a-zA-Z$_]+[a-zA-Z$_0-9]*)

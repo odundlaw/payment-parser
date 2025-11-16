@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const fs = require('fs');
 const path = require('path');
 const lexer = require('./util-lex-file');
@@ -10,7 +8,7 @@ const endpointFileGenerator = require('./util-endpoint-file-generator');
 const mongooseSchemaGenerator = require('./util-mongoose-schema-generator');
 const endpointDocGenerator = require('./util-endpoint-doc-generator');
 const loadSPCLConfig = require('./util-load-config');
-//console.log(process.cwd(), process.argv);
+// console.log(process.cwd(), process.argv);
 
 const usableArgs = process.argv.slice(2);
 const [fileName] = usableArgs;
@@ -27,7 +25,7 @@ const configFileExists = fs.existsSync(configFile);
 if (fileExists) {
   // console.log(lexer(lookupFile));
   let config = {};
-  if(configFileExists) {
+  if (configFileExists) {
     config = loadSPCLConfig(configFile);
   }
   const lexicalTokens = lexer(lookupFile);
@@ -43,12 +41,12 @@ if (fileExists) {
       {
         abstractSyntaxTree,
         ts: typescriptGenerator(abstractSyntaxTree, 0, abstractSyntaxTree),
-        //serv: serviceFileGenerator(abstractSyntaxTree),
+        // serv: serviceFileGenerator(abstractSyntaxTree),
       },
       null,
-      2,
+      2
     ),
-    { encoding: 'utf-8' },
+    { encoding: 'utf-8' }
   );
 } else {
   console.warn(`${lookupFile} not found`);

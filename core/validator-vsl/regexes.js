@@ -17,12 +17,10 @@ const processors = [
 const processorsLength = processors.length;
 module.exports = function doRegexLineProcessing(line, lineNodeParent) {
   let nodeInfo;
-  let commentProcessorResult = multiLineCommentProcessor(line);
-  const parentIsCommentBlockOpening =
-    lineNodeParent?.attributes?.isMultiLineCommentOpening;
+  const commentProcessorResult = multiLineCommentProcessor(line);
+  const parentIsCommentBlockOpening = lineNodeParent?.attributes?.isMultiLineCommentOpening;
   const isCommentClosing = commentProcessorResult.isMultiLineCommentClosing;
-  const isMultiLineCommentOpening =
-    commentProcessorResult.isMultiLineCommentOpening;
+  const { isMultiLineCommentOpening } = commentProcessorResult;
   if (commentProcessorResult.isCommentNode || parentIsCommentBlockOpening) {
     if (
       (isCommentClosing && parentIsCommentBlockOpening) ||

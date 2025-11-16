@@ -1,8 +1,8 @@
 // const jsdocGenerator = require('./jsdoc-generator');
+const fs = require('fs');
 const mongooseGenerator = require('./mongoose-schema-generator');
 const typeScriptGenerator = require('./util-typescript-generator');
 const { toKebabCase, writeFileWithDirs } = require('./util-helpers');
-const fs = require('fs');
 
 function updateIndexJs(fileName, variableName) {
   try {
@@ -13,7 +13,7 @@ function updateIndexJs(fileName, variableName) {
       const newIndexFileContent = indexFileContent
         .replace(
           '// #spcl:require',
-          `const ${variableName} = require('./${fileName}');\n// #spcl:require`,
+          `const ${variableName} = require('./${fileName}');\n// #spcl:require`
         )
         .replace('// #spcl:export', `${variableName},\n\t// #spcl:export`);
       fs.writeFileSync('./models/index.js', newIndexFileContent, {
@@ -30,31 +30,28 @@ function generateServiceFile(AST, config) {
   const serviceCodeStrings = [];
   // const specStrings = [];
 
-  const { generateModelTypes } = (config || {});
+  const { generateModelTypes } = config || {};
   const astKeys = Object.keys(AST);
   astKeys.forEach((astKey) => {
     const astNode = AST[astKey];
     if (astKey.toLowerCase().endsWith('model')) {
       const adhocAST = { [astKey]: astNode };
       const modelString = mongooseGenerator(adhocAST, 0, AST);
-      writeFileWithDirs(
-        `./models/${toKebabCase(astKey).replace('-model', '')}.js`,
-        modelString,
-      );
+      writeFileWithDirs(`./models/${toKebabCase(astKey).replace('-model', '')}.js`, modelString);
       updateIndexJs(`${toKebabCase(astKey).replace('-model', '')}`, astKey);
       writeFileWithDirs(
         `./repository/${toKebabCase(astKey).replace('-model', '')}/index.js`,
-        `const repositoryFactory = require('../../core/repository-factory');\nmodule.exports = repositoryFactory('${astKey}', {});\n`,
+        `const repositoryFactory = require('../../core/repository-factory');\nmodule.exports = repositoryFactory('${astKey}', {});\n`
       );
-      if(generateModelTypes) {
+      if (generateModelTypes) {
         const typescriptString = typeScriptGenerator(
           { [astKey]: { ...astNode, isRoot: true } },
           0,
-          AST,
-        )
+          AST
+        );
         writeFileWithDirs(
           `./models/types/${toKebabCase(astKey).replace('-model', '')}-type.ts`,
-          typescriptString,
+          typescriptString
         );
       }
     }

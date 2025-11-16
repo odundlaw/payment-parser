@@ -1,6 +1,6 @@
+const fs = require('fs');
 const prelexer = require('./pre-lex');
 const lexer = require('./lexer');
-const fs = require('fs');
 
 function lexFile(filePath) {
   const fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
